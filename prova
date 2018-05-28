@@ -1,0 +1,165 @@
+import urllib2, os
+import PyPDF2
+
+
+def cerca_data (l, lunghezza, testo, data):
+    while 1:
+        if lunghezza > l:
+            return data
+        if testo[l - lunghezza + 2] == '/' and testo[l - lunghezza + 5] == '/' and testo[l - lunghezza + 10] == '\n':
+            break
+        lunghezza += 1
+    giorno = testo[l - lunghezza : l-lunghezza + 10]
+    return giorno
+
+
+def limiti_data (pdf, inf, sup):
+    pagina_0 = pdf.getPage(0)
+    length = len(pagina_0)
+    le = length
+    while 1:
+        if inf == 1:
+            if pagina_0[(le - length) : (le - length + 5)] == 'luned':
+                length -= 7
+                if pagina_0[le - length + 1] != ' ':
+                    day = pagina_0[le - length : le - length + 2]
+                    length -= 3
+                else:
+                    day = '0' + pagina_0[le - length]
+                    length -= 2
+                month = ''
+                if pagina_0[le - length: le - length + 3] == 'gen':
+                    month = '01'
+                    length -= 8
+                if pagina_0[le - length: le - length + 3] == 'feb':
+                    month = '02'
+                    length -= 9
+                if pagina_0[le - length: le - length + 3] == 'mar':
+                    month = '03'
+                    length -= 6
+                if pagina_0[le - length: le - length + 3] == 'apr':
+                    month = '04'
+                    length -= 7
+                if pagina_0[le - length: le - length + 3] == 'mag':
+                    month = '05'
+                    length -= 7
+                if pagina_0[le - length: le - length + 3] == 'giu':
+                    month = '06'
+                    length -= 7
+                if pagina_0[le - length: le - length + 3] == 'lug':
+                    month = '07'
+                    length -= 7
+                if pagina_0[le - length: le - length + 3] == 'ago':
+                    month = '08'
+                    length -= 7
+                if pagina_0[le - length: le - length + 3] == 'set':
+                    month = '09'
+                    length -= 10
+                if pagina_0[le - length: le - length + 3] == 'ott':
+                    month = '10'
+                    length -= 8
+                if pagina_0[le - length: le - length + 3] == 'nov':
+                    month = '11'
+                    length -= 9
+                if pagina_0[le - length: le - length + 3] == 'dic':
+                    month = '12'
+                    length -= 9
+                year = pagina_0[le - length: le - length + 4]
+                data_compl = day + '/' + month + '/' + year
+                print data_compl
+        if sup == 1:
+            if pagina_0[(le - length) : (le - length + 5)] == 'domen':
+                length -= 9
+                if pagina_0[le - length + 1] != ' ':
+                    day = pagina_0[le - length : le - length + 2]
+                    length -= 3
+                else:
+                    day = '0' + pagina_0[le - length]
+                    length -= 2
+                month = ''
+                if pagina_0[le - length: le - length + 3] == 'gen':
+                    month = '01'
+                    length -= 8
+                if pagina_0[le - length: le - length + 3] == 'feb':
+                    month = '02'
+                    length -= 9
+                if pagina_0[le - length: le - length + 3] == 'mar':
+                    month = '03'
+                    length -= 6
+                if pagina_0[le - length: le - length + 3] == 'apr':
+                    month = '04'
+                    length -= 7
+                if pagina_0[le - length: le - length + 3] == 'mag':
+                    month = '05'
+                    length -= 7
+                if pagina_0[le - length: le - length + 3] == 'giu':
+                    month = '06'
+                    length -= 7
+                if pagina_0[le - length: le - length + 3] == 'lug':
+                    month = '07'
+                    length -= 7
+                if pagina_0[le - length: le - length + 3] == 'ago':
+                    month = '08'
+                    length -= 7
+                if pagina_0[le - length: le - length + 3] == 'set':
+                    month = '09'
+                    length -= 10
+                if pagina_0[le - length: le - length + 3] == 'ott':
+                    month = '10'
+                    length -= 8
+                if pagina_0[le - length: le - length + 3] == 'nov':
+                    month = '11'
+                    length -= 9
+                if pagina_0[le - length: le - length + 3] == 'dic':
+                    month = '12'
+                    length -= 9
+                year = pagina_0[le - length: le - length + 4]
+                data_compl = day + '/' + month + '/' + year
+                print data_compl
+        length -= 1
+
+
+ghh = urllib2.urlopen('http://poliziadistato.it/statics/47/lombardia.pdf')
+datatowrite = ghh.read()
+dir = os.tempnam() + '\\file.pdf'
+with open(dir, 'wb') as f:
+    f.write(datatowrite)
+ghh2 = open(dir, 'rb')
+pdf = PyPDF2.PdfFileReader(ghh2)
+a = 0
+b = 1
+limiti_data(pdf, b, a)
+limiti_data(pdf, a, b)
+prov = ''
+while prov != 'LO' and prov != 'MI' and prov != 'VA' and prov != 'PV' and prov != 'BG' and prov != 'SO' and prov != 'BS' and prov != 'CO' and prov != 'CR' and prov != 'LC' and prov != 'MN' and prov != 'MB':
+    prov = raw_input('Inserire la provincia lombarda da controllare: ')
+    if prov != 'LO' and prov != 'MI' and prov != 'VA' and prov != 'PV' and prov != 'BG' and prov != 'SO' and prov != 'BS' and prov != 'CO' and prov != 'CR' and prov != 'LC' and prov != 'MN' and prov != 'MB':
+        print 'Inserire la sigla di una provincia lombarda in caratteri maiuscoli!'
+data_controllo = raw_input('Inserire data compresa tra', limite_inf, 'e', limite_sup)
+numero_pagine = pdf.getNumPages()
+n = numero_pagine
+data = '\n'
+while numero_pagine > 0:
+    page = pdf.getPage(n - numero_pagine)
+    testo = page.extractText()
+    lunghezza = len(testo)
+    l = lunghezza
+    while lunghezza > 3:
+        tipo_strada = ''
+        nome_strada = ''
+        provincia = ''
+        if ((testo[l - lunghezza] + testo[l - lunghezza + 1] + testo[l - lunghezza + 2]) == 'SP\n') or ((testo[l - lunghezza] + testo[l - lunghezza + 1] + testo[l - lunghezza + 2]) == 'A\n') or ((testo[l - lunghezza] + testo[l - lunghezza + 1] + testo[l - lunghezza + 2]) == 'SS\n'):
+            tipo_strada = (testo[l - lunghezza] + testo[l - lunghezza + 1])
+            lunghezza -= 3
+            if data != cerca_data(l, lunghezza, testo, data):
+                data = cerca_data(l, lunghezza, testo, data)
+            while testo[l - lunghezza] != '\n':
+                nome_strada = nome_strada + testo[l - lunghezza]
+                lunghezza -= 1
+            lunghezza -= 1
+            provincia = testo[l - lunghezza] + testo[l - lunghezza + 1]
+            if prov == provincia and data == data_controllo:
+                print data
+                print tipo_strada, nome_strada, provincia
+        lunghezza -= 1
+    numero_pagine -= 1
